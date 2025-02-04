@@ -5,19 +5,37 @@ import (
 	"os"
 	"bufio"
 	"os/exec"
+	"strings"
+	"golang.org/x/sys/unix"
 )
 
 func spaceship (spaceshipPosition *[]string, current int, direction string) int {
 	if direction == "k" {
-		(*spaceshipPosition)[current] = ".";
+		(*spaceshipPosition)[current] = "";
 		(*spaceshipPosition)[current+1] = "H";
 		return current + 1;
 	} else if direction == "j" {
-		(*spaceshipPosition)[current] = ".";
+		(*spaceshipPosition)[current] = "";
 		(*spaceshipPosition)[current-1] = "H";
 		return current - 1;
 	}
 	return current;
+}
+
+func render(screen [][]string) {
+    fmt.Print("\033[H\033[2J") // Clear screen
+    for _, row := range screen {
+        fmt.Println(strings.Join(row, ""))
+    }
+}
+
+func getTerminalSize() (width, height int) {
+	// var ws unix.Winsize
+	ws, err := unix.IoctlGetWinsize(0, unix.TIOCGWINSZ)
+	if err != nil {
+		return 80,24;
+	}
+	return int(ws.Col), int(ws.Row)
 }
 			
 func main() {
@@ -30,12 +48,16 @@ func main() {
 
 	reader := bufio.NewReader(os.Stdin);
 	var current int = 5;
-	var spaceshipPosition = make([]string, 11);
-	spaceshipPosition[5] = "H";
+
+	var width, height int = getTerminalSize();
+
+	screen := make([][]string, height)
+	for i := range screen {
+    		screen[i] = make([]string, width)
+	}
 
 	for {
-		fmt.Print("\033[H\033[2J");
-		fmt.Println(spaceshipPosition);
+		render(screen);
 		input, _ := reader.ReadByte();
 		var inputString string = string(input);
 		if inputString == "q" {
