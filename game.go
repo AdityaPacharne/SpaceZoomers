@@ -9,17 +9,19 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func spaceship (spaceshipPosition *[]string, current int, direction string) int {
+func spaceship (spaceshipPosition *[][]string, currentHeight int, currentWidth int, direction string) int {
 	if direction == "k" {
-		(*spaceshipPosition)[current] = "";
-		(*spaceshipPosition)[current+1] = "H";
-		return current + 1;
+		(*spaceshipPosition)[currentHeight][currentWidth] = ".";
+		(*spaceshipPosition)[currentHeight][currentWidth+1] = "H";
+		return currentWidth + 1;
 	} else if direction == "j" {
-		(*spaceshipPosition)[current] = "";
-		(*spaceshipPosition)[current-1] = "H";
-		return current - 1;
+		(*spaceshipPosition)[currentHeight][currentWidth] = ".";
+		(*spaceshipPosition)[currentHeight][currentWidth-1] = "H";
+		return currentWidth - 1;
+	} else {
+		fmt.Println("Invalid Input");
 	}
-	return current;
+	return currentWidth;
 }
 
 func render(screen [][]string) {
@@ -47,14 +49,23 @@ func main() {
 	exec.Command("stty", "-f", "/dev/tty", "-echo").Run();
 
 	reader := bufio.NewReader(os.Stdin);
-	var current int = 5;
 
 	var width, height int = getTerminalSize();
+	fmt.Println("Width: ", width);
+	fmt.Println("Height: ", height);
 
-	screen := make([][]string, height)
+	screen := make([][]string, height);
 	for i := range screen {
     		screen[i] = make([]string, width)
+		for j := range screen[i] {
+			screen[i][j] = ".";
+		}
 	}
+	screen[height-1][width/2] = "H";
+	var currentHeight int = height-1;
+	var currentWidth int = width/2;
+	fmt.Println("Spaceship Height: ", currentHeight);
+	fmt.Println("Spaceship Width: ", currentWidth);
 
 	for {
 		render(screen);
@@ -63,7 +74,7 @@ func main() {
 		if inputString == "q" {
 			break;
 		}
-		current = spaceship(&spaceshipPosition, current, inputString);
+		currentWidth = spaceship(&screen, currentHeight, currentWidth, inputString);
 	}
 	exec.Command("stty", string(player_stty_settings)).Run();
 	fmt.Println("Your stty settings have been restored");
