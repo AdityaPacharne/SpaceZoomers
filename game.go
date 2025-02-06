@@ -17,23 +17,34 @@ type Rocks struct {
 	yaxis int
 }
 
-type bullet struct {
+type Bullet struct {
 	existence bool
 	xaxis int
 	yaxis int
 }
 
-func spaceship (spaceshipPosition *[][]string, currentHeight int, currentWidth int, direction string, terminalHeight int, terminalWidth int) int {
+func (r *Bullet) bulletLocation(screen *[][]string, terminalHeight int, terminalWidth int) {
+	var bulletX int = r.xaxis;
+	var bulletY int = r.yaxis;
+	if bulletY == 0 {
+		r.existence = false;
+	}
+}
+
+func bulletCreate (screen *[][]string, currentHeight int, currentWidth int, activeBullets *[]Bullet, quit) {
+
+
+func spaceship (screen *[][]string, currentHeight int, currentWidth int, direction string, terminalHeight int, terminalWidth int) int {
 	if direction == "k" {
 		if currentWidth < terminalWidth - 1 {
-			(*spaceshipPosition)[currentHeight][currentWidth] = "_";
-			(*spaceshipPosition)[currentHeight][currentWidth+1] = "H";
+			(*screen)[currentHeight][currentWidth] = "_";
+			(*screen)[currentHeight][currentWidth+1] = "H";
 			return currentWidth + 1;
 		}
 	} else if direction == "j" {
 		if currentWidth > 0 {
-			(*spaceshipPosition)[currentHeight][currentWidth] = "_";
-			(*spaceshipPosition)[currentHeight][currentWidth-1] = "H";
+			(*screen)[currentHeight][currentWidth] = "_";
+			(*screen)[currentHeight][currentWidth-1] = "H";
 			return currentWidth - 1;
 		}
 	} else {
@@ -57,7 +68,7 @@ func render(screen *[][]string, quit chan bool) {
 	}
 }
 
-func getTerminalSize() (width, height int) {
+func getTerminalSize() (terminalWidth, terminalHeight int) {
 	ws, err := unix.IoctlGetWinsize(0, unix.TIOCGWINSZ)
 	if err != nil {
 		return 80,24;
@@ -65,7 +76,7 @@ func getTerminalSize() (width, height int) {
 	return int(ws.Col), int(ws.Row)
 }
 
-func playerInput(screen *[][]string, currentHeight int, currentWidth int, height int, width int, quit chan bool) {
+func playerInput(screen *[][]string, currentHeight int, currentWidth int, terminalHeight int, terminalWidth int, quit chan bool) {
 	reader := bufio.NewReader(os.Stdin);
 	for {
 		input, _ := reader.ReadByte();
@@ -74,7 +85,7 @@ func playerInput(screen *[][]string, currentHeight int, currentWidth int, height
 			quit <- true;
 			break;
 		}
-		currentWidth = spaceship(screen, currentHeight, currentWidth, inputString, height, width);
+		currentWidth = spaceship(screen, currentHeight, currentWidth, inputString, terminalHeight, terminalWidth);
 	}
 }
 			
@@ -87,25 +98,25 @@ func main() {
 	exec.Command("stty", "-f", "/dev/tty", "-echo").Run();
 
 
-	var width, height int = getTerminalSize();
-	fmt.Println("Width: ", width);
-	fmt.Println("Height: ", height);
+	var terminalWidth, terminalHeight int = getTerminalSize();
+	fmt.Println("Width: ", terminalWidth);
+	fmt.Println("Height: ", terminalHeight);
 
-	screen := make([][]string, height);
+	screen := make([][]string, terminalHeight);
 	for i := range screen {
-    		screen[i] = make([]string, width)
+    		screen[i] = make([]string, terminalWidth)
 		for j := range screen[i] {
 			screen[i][j] = "_";
 		}
 	}
-	screen[height-1][width/2] = "H";
-	var currentHeight int = height-1;
-	var currentWidth int = width/2;
+	screen[terminalHeight-1][terminalWidth/2] = "H";
+	var currentHeight int = terminalHeight-1;
+	var currentWidth int = terminalWidth/2;
 
 	quit := make(chan bool);
 	
 	var wg sync.WaitGroup
-	wg.Add(2);
+	wg.Add(3);
 
 	go func() {
 		defer wg.Done();
@@ -114,7 +125,12 @@ func main() {
 
 	go func() {
 		defer wg.Done();
-		playerInput(&screen, currentHeight, currentWidth, height, width, quit);
+		playerInput(&screen, currentHeight, currentWidth, terminalHeight, terminalWidth, quit);
+	}();
+
+	go func() {
+		defer wg.Done();
+		bulletCreate(&screen, currentHeight, currentWidth, quit)
 	}();
 
 	wg.Wait();
