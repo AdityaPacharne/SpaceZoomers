@@ -17,13 +17,13 @@ type Rocks struct {
 	yaxis int
 }
 
-type Bullet struct {
+type bullet struct {
 	existence bool
 	xaxis int
 	yaxis int
 }
 
-func (r *Bullet) bulletLocation(screen *[][]string, terminalHeight int, terminalWidth int) {
+func (r *bullet) bulletLocation(screen *[][]string, terminalHeight int, terminalWidth int) {
 	var bulletX int = r.xaxis;
 	var bulletY int = r.yaxis;
 	if bulletY == 0 {
@@ -31,8 +31,9 @@ func (r *Bullet) bulletLocation(screen *[][]string, terminalHeight int, terminal
 	}
 }
 
-func bulletCreate (screen *[][]string, currentHeight int, currentWidth int, activeBullets *[]Bullet, quit) {
-
+func bulletCreate (screen *[][]string, currentHeight int, currentWidth int, activeBullets *[]bullet, quit) {
+	(*activeBullets) = (*activeBullets).append(bullet{existence: true, xaxis: currentHeight-1, yaxis: currentWidth});
+}
 
 func spaceship (screen *[][]string, currentHeight int, currentWidth int, direction string, terminalHeight int, terminalWidth int) int {
 	if direction == "k" {
