@@ -31,27 +31,38 @@ func (r *bullet) bulletLocation(screen *[][]string, terminalHeight int, terminal
 	}
 }
 
-func bulletCreate (screen *[][]string, currentHeight int, currentWidth int, activeBullets *[]bullet, quit) {
-	(*activeBullets) = (*activeBullets).append(bullet{existence: true, xaxis: currentHeight-1, yaxis: currentWidth});
+func bulletExistence (screen *[][]string, activeBullets *[]bullet) {
+	for tempBullet := activeBullets {
+
+func bulletCreate (screen *[][]string, currentHeight *int, currentWidth *int, activeBullets *[]bullet, quit chan bool) {
+	for {
+		select {
+		case <- quit:
+			return
+		default:
+			(*activeBullets) = (*activeBullets).append(bullet{existence: true, xaxis: *currentHeight - 1, yaxis: *currentWidth});
+			(*screen)[*currentHeight - 1][*currentWidth] = "^";
+			time.Sleep(100 * time.Millisecond);
+		}
+	}
 }
 
-func spaceship (screen *[][]string, currentHeight int, currentWidth int, direction string, terminalHeight int, terminalWidth int) int {
+func spaceship (screen *[][]string, currentHeight *int, currentWidth *int, direction string, terminalHeight int, terminalWidth int) {
 	if direction == "k" {
-		if currentWidth < terminalWidth - 1 {
-			(*screen)[currentHeight][currentWidth] = "_";
-			(*screen)[currentHeight][currentWidth+1] = "H";
-			return currentWidth + 1;
+		if *currentWidth < terminalWidth - 1 {
+			(*screen)[*currentHeight][*currentWidth] = "_";
+			(*screen)[*currentHeight][*currentWidth+1] = "H";
+			*currentWidth += 1;
 		}
 	} else if direction == "j" {
-		if currentWidth > 0 {
-			(*screen)[currentHeight][currentWidth] = "_";
-			(*screen)[currentHeight][currentWidth-1] = "H";
-			return currentWidth - 1;
+		if *currentWidth > 0 {
+			(*screen)[*currentHeight][*currentWidth] = "_";
+			(*screen)[*currentHeight][*currentWidth-1] = "H";
+			*currentWidth -= 1;
 		}
 	} else {
 		fmt.Println("Invalid Input");
 	}
-	return currentWidth;
 }
 
 func render(screen *[][]string, quit chan bool) {
@@ -77,7 +88,7 @@ func getTerminalSize() (terminalWidth, terminalHeight int) {
 	return int(ws.Col), int(ws.Row)
 }
 
-func playerInput(screen *[][]string, currentHeight int, currentWidth int, terminalHeight int, terminalWidth int, quit chan bool) {
+func playerInput(screen *[][]string, *currentHeight int, *currentWidth int, terminalHeight int, terminalWidth int, quit chan bool) {
 	reader := bufio.NewReader(os.Stdin);
 	for {
 		input, _ := reader.ReadByte();
@@ -86,7 +97,7 @@ func playerInput(screen *[][]string, currentHeight int, currentWidth int, termin
 			quit <- true;
 			break;
 		}
-		currentWidth = spaceship(screen, currentHeight, currentWidth, inputString, terminalHeight, terminalWidth);
+		spaceship(screen, currentHeight, currentWidth, inputString, terminalHeight, terminalWidth);
 	}
 }
 			
@@ -114,6 +125,8 @@ func main() {
 	var currentHeight int = terminalHeight-1;
 	var currentWidth int = terminalWidth/2;
 
+	var activeBullets []bullet;
+
 	quit := make(chan bool);
 	
 	var wg sync.WaitGroup
@@ -126,12 +139,12 @@ func main() {
 
 	go func() {
 		defer wg.Done();
-		playerInput(&screen, currentHeight, currentWidth, terminalHeight, terminalWidth, quit);
+		playerInput(&screen, &currentHeight, &currentWidth, terminalHeight, terminalWidth, quit);
 	}();
 
 	go func() {
 		defer wg.Done();
-		bulletCreate(&screen, currentHeight, currentWidth, quit)
+		bulletCreate(&screen, &currentHeight, &currentWidth, &activeBullets, quit)
 	}();
 
 	wg.Wait();
