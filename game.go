@@ -23,23 +23,28 @@ type bullet struct {
 	yaxis int
 }
 
-func (r *bullet) bulletLocation(screen *[][]string, terminalHeight int, terminalWidth int) {
-	var bulletX int = r.xaxis;
-	var bulletY int = r.yaxis;
-	if bulletY == 0 {
-		r.existence = false;
+func bulletExistence (screen *[][]string, b *bullet, terminalHeight int, terminalWidth int) bool {
+	if b.yaxis == 2 {
+		return false;
 	}
+	return true;
 }
 
-func bulletExistence (screen *[][]string, activeBullets *[]bullet) {
+func bulletLocation (screen *[][]string, activeBullets *[]bullet) {
 	for tempBullet := activeBullets {
 
-func bulletCreate (screen *[][]string, currentHeight *int, currentWidth *int, activeBullets *[]bullet, quit chan bool) {
+func bulletCreate (screen *[][]string, currentHeight *int, currentWidth *int, activeBullets *[]bullet, terminalHeight int, terminalWidth int, quit chan bool) {
 	for {
 		select {
 		case <- quit:
 			return
 		default:
+			newBullets := activeBullets[:0];
+			for _, tempBullet := range activeBullets {
+				var tempExistence bool = bulletExistence (screen, tempBullet, terminalHeight, terminalWidth);
+				if !tempExistence {
+					newBullets = append(newBullets, tempBullet);
+
 			(*activeBullets) = (*activeBullets).append(bullet{existence: true, xaxis: *currentHeight - 1, yaxis: *currentWidth});
 			(*screen)[*currentHeight - 1][*currentWidth] = "^";
 			time.Sleep(100 * time.Millisecond);
@@ -144,7 +149,7 @@ func main() {
 
 	go func() {
 		defer wg.Done();
-		bulletCreate(&screen, &currentHeight, &currentWidth, &activeBullets, quit)
+		bulletCreate(&screen, &currentHeight, &currentWidth, &activeBullets, terminalHeight, terminalWidth, quit)
 	}();
 
 	wg.Wait();
