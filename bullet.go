@@ -9,14 +9,14 @@ type bullet struct {
 func bulletExistence (activeBullets *[]bullet, terminalHeight int) bool {
     var newBullets []bullet;
     for i := range *activeBullets {
-        if (activeBullets[i].direction && activeBullets[i].yaxis >= 2) || (!activeBullets[i].direction && activeBullets[i].yaxis <= terminalHeight - 2 {  
-            newBullets.append(newBullets, (*activeBullet)[i]);
+        if (activeBullets[i].direction && activeBullets[i].yaxis >= 2) || (!activeBullets[i].direction && activeBullets[i].yaxis <= terminalHeight - 2) {  
+            newBullets.append(newBullets, (*activeBullets)[i]);
         }
     }
-    *activeBullet = newBullet;
+    *activeBullet = newBullets;
 }
 
-func bulletLocation (activeBullets *[]bullet, quit chan bool) {
+func BulletLocation (activeBullets *[]bullet, quit chan bool) {
     for {
         select {
         case <- quit:
@@ -33,7 +33,7 @@ func bulletLocation (activeBullets *[]bullet, quit chan bool) {
     }
 }
 
-func bulletCreate (activeBullets *[]bullet, currentHeight *int, currentWidth *int, spaceshipBullet bool, quit chan bool) {
+func BulletCreate (activeBullets *[]bullet, currentHeight *int, currentWidth *int, spaceshipBullet bool, quit chan bool) {
 	for {
 		select {
 		case <- quit:

@@ -79,25 +79,25 @@ func main() {
     // Goroutine to Print the screen
 	go func() {
 		defer wg.Done();
-		render(screen, &activeBullets, quit);
+		Render(screen, &activeBullets, terminalWidth, currentHeight, currentWidth, spaceshipDirection, quit);
 	}();
 
     // Goroutine to take player input and modify the position of spaceship accordingly
 	go func() {
 		defer wg.Done();
-		playerInput(&screen, &currentHeight, &currentWidth, terminalHeight, terminalWidth, quit);
+		PlayerInput(spaceshipDirection, &currentHeight, &currentWidth, terminalHeight, terminalWidth, quit);
 	}();
 
     // Go routine to create bullet every specific duration
     // It is made so the user dont have to shoot, the spaceship will keep firing and the user has to aim
 	go func() {
 		defer wg.Done();
-		bulletCreate(&activeBullets, &currentHeight, &currentWidth, true, quit);
+		BulletCreate(&activeBullets, &currentHeight, &currentWidth, true, quit);
 	}();
 
 	go func() {
 		defer wg.Done();
-        bulletLocation(&activeBullets, terminalHeight, quit);
+        BulletLocation(&activeBullets, terminalHeight, quit);
 	}();
 
     // WaitGroup waits....
