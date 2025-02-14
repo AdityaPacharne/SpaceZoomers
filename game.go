@@ -2,12 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"bufio"
-	"os/exec"
-	"strings"
 	"golang.org/x/sys/unix"
-	"time"
 	"sync"
 )
 
@@ -41,13 +36,6 @@ func main() {
     // Player Enters
 	fmt.Println("Welcome Player");
 	fmt.Println("Enter q to exit");
-
-    // We store the players stty settings and make some changes but we will restore the user's settings when they quit
-	player_stty_settings, _ := exec.Command("stty", "-g").Output()
- 
-    // stty settings to take only one element as input and to show it to the user
-	exec.Command("stty", "-f", "/dev/tty", "cbreak", "min", "1").Run();
-	exec.Command("stty", "-f", "/dev/tty", "-echo").Run();
 
     // Fetching the terminal size
 	var terminalWidth, terminalHeight int = getTerminalSize();
@@ -102,10 +90,6 @@ func main() {
 
     // WaitGroup waits....
 	wg.Wait();
-
-    // We restore the stty settings of player
-	exec.Command("stty", string(player_stty_settings)).Run();
-	fmt.Println("Your stty settings have been restored");
 
     // A little thanks for playing
     // Thanks for playing my game

@@ -35,7 +35,7 @@ func Render(screen [][]string, activeBullets *[]bullet, terminalWidth int, curre
                 var newCurrentWidth int= checkOutOfBound(terminalWidth, currentWidth, dir);
                 screen[currentHeight][newCurrentWidth] = "H";
             default:
-                    screen[currentHeight][currentWidth] = "H";
+                screen[currentHeight][currentWidth] = "H";
             }
 
             // Printint the screen
