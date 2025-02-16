@@ -17,25 +17,31 @@ func checkOutOfBound(terminalWidth int, copyOfCurrentWidth int, spaceshipDirecti
     }
 }
 
-func Render(screen [][]string, activeBullets *[]bullet, terminalWidth int, currentHeight int, currentWidth int, spaceshipDirection chan string, quit chan bool) {
+func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int, currentHeight *int, currentWidth *int, spaceshipDirection chan string, quit chan bool) {
 	for {
 		select {
 		case <- quit:
 			return
 		default:
+            screen := make([][]string, len(actualScreen))
+            for i := range actualScreen {
+                screen[i] = append([]string(nil), actualScreen[i]...) // Deep copy each row
+            }
+
 			fmt.Print("\033[H\033[2J")
 
             // Adds bullet onto the screen from activeBullets slice
             for _, tempBullet := range *activeBullets {
-                screen[tempBullet.xaxis][tempBullet.yaxis] = "^";
+                screen[tempBullet.height][tempBullet.width] = "^";
             }
 
             select {
             case dir := <- spaceshipDirection:
-                var newCurrentWidth int= checkOutOfBound(terminalWidth, currentWidth, dir);
-                screen[currentHeight][newCurrentWidth] = "H";
+                var spaceshipWidth int = *currentWidth;
+                var newCurrentWidth int = checkOutOfBound(terminalWidth, spaceshipWidth, dir);
+                screen[*currentHeight][newCurrentWidth] = "H";
             default:
-                screen[currentHeight][currentWidth] = "H";
+                screen[*currentHeight][*currentWidth] = "H";
             }
 
             // Printint the screen
@@ -43,7 +49,7 @@ func Render(screen [][]string, activeBullets *[]bullet, terminalWidth int, curre
 				fmt.Println(strings.Join(row, ""))
 			}
 
-			time.Sleep(10 * time.Millisecond);
+			time.Sleep(100 * time.Millisecond);
 		}
 	}
 }

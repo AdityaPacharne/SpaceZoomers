@@ -3,7 +3,6 @@ package main
 import (
     "os"
     "bufio"
-    "fmt"
     "golang.org/x/term"
     "time"
 )
@@ -29,12 +28,11 @@ func PlayerInput(spaceshipDirection chan string, currentHeight *int, currentWidt
                 }
             }
         } else if input == 'q' {
-            for i:=0; i<4; i++ {
+            for i:=0; i<3; i++ {
                 quit <- true;
             }
-        } else {
-            fmt.Printf("You typed: %c\n", input)
+            break;
         }
-        time.Sleep(10 * time.MilliSecond);
+        time.Sleep(100 * time.Millisecond);
     }
 }

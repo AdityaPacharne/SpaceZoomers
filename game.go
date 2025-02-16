@@ -8,8 +8,8 @@ import (
 
 type spaceship struct {
     health int
-    xaxis int
-    yaxis int
+    height int
+    width int
 }
 
 type Rocks struct {
@@ -19,17 +19,17 @@ type Rocks struct {
 
 type bullet struct {
     direction bool
-	xaxis int
-	yaxis int
+	height int
+	width int
 }
 
 // Code to fetch terminal size
-func getTerminalSize() (terminalWidth, terminalHeight int) {
+func getTerminalSize() (terminalHeight, terminalWidth int) {
 	ws, err := unix.IoctlGetWinsize(0, unix.TIOCGWINSZ)
 	if err != nil {
 		return 80,24;
 	}
-	return int(ws.Col), int(ws.Row)
+	return int(ws.Row), int(ws.Col)
 }
 
 func main() {
@@ -38,14 +38,14 @@ func main() {
 	fmt.Println("Enter q to exit");
 
     // Fetching the terminal size
-	var terminalWidth, terminalHeight int = getTerminalSize();
+	var terminalHeight, terminalWidth int = getTerminalSize();
 
     // Creating a nested slice of strings to perfectly mimic user's terminal as screen
 	screen := make([][]string, terminalHeight);
 	for i := range screen {
     	screen[i] = make([]string, terminalWidth)
 		for j := range screen[i] {
-			screen[i][j] = "_";
+			screen[i][j] = " ";
 		}
 	}
     
@@ -67,7 +67,7 @@ func main() {
     // Goroutine to Print the screen
 	go func() {
 		defer wg.Done();
-		Render(screen, &activeBullets, terminalWidth, currentHeight, currentWidth, spaceshipDirection, quit);
+		Render(screen, &activeBullets, terminalWidth, &currentHeight, &currentWidth, spaceshipDirection, quit);
 	}();
 
     // Goroutine to take player input and modify the position of spaceship accordingly
