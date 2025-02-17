@@ -7,17 +7,20 @@ import (
 )
 
 // Function that renders the screen
-func checkOutOfBound(terminalWidth int, copyOfCurrentWidth int, spaceshipDirection string) int {
-    if spaceshipDirection == "right" && copyOfCurrentWidth < terminalWidth-1 {
-        return copyOfCurrentWidth + 1;
-    } else if spaceshipDirection == "left" && copyOfCurrentWidth > 0 {
-        return copyOfCurrentWidth - 1;
+func checkOutOfBound(terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection string) int {
+    fmt.Println("Inside checker");
+    if spaceshipDirection == "right" && spaceship.width < terminalWidth-1 {
+        (*spaceship).width++;
+        return (*spaceship).width + 1;
+    } else if spaceshipDirection == "left" && spaceship.width > 0 {
+        (*spaceship).width--;
+        return (*spaceship).width - 1;
     } else {
-        return copyOfCurrentWidth;
+        return (*spaceship).width;
     }
 }
 
-func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int, currentHeight *int, currentWidth *int, spaceshipDirection chan string, quit chan bool) {
+func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection chan string, quit chan bool) {
 	for {
 		select {
 		case <- quit:
@@ -37,19 +40,18 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int,
 
             select {
             case dir := <- spaceshipDirection:
-                var spaceshipWidth int = *currentWidth;
-                var newCurrentWidth int = checkOutOfBound(terminalWidth, spaceshipWidth, dir);
-                screen[*currentHeight][newCurrentWidth] = "H";
+                var newCurrentWidth int = checkOutOfBound(terminalWidth, spaceship, dir);
+                screen[spaceship.height][newCurrentWidth] = "H";
             default:
-                screen[*currentHeight][*currentWidth] = "H";
+                screen[spaceship.height][spaceship.width] = "H";
             }
 
-            // Printint the screen
+            // Printing the screen
 			for _, row := range (screen) {
 				fmt.Println(strings.Join(row, ""))
 			}
 
-			time.Sleep(100 * time.Millisecond);
+			time.Sleep(50 * time.Millisecond);
 		}
 	}
 }

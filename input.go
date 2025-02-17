@@ -7,7 +7,7 @@ import (
     "time"
 )
 
-func PlayerInput(spaceshipDirection chan string, currentHeight *int, currentWidth *int, terminalHeight int, terminalWidth int, quit chan bool) {
+func PlayerInput(spaceshipDirection chan string, spaceship *spaceshipstruct, terminalHeight int, terminalWidth int, quit chan bool) {
     fd := int(os.Stdin.Fd());
     oldState, _ := term.MakeRaw(fd);
     defer term.Restore(fd, oldState);
@@ -20,10 +20,8 @@ func PlayerInput(spaceshipDirection chan string, currentHeight *int, currentWidt
             next2, _ := reader.ReadByte();
             if next1 == 91 {
                 if next2 == 67 {
-                    (*currentWidth)++;
                     spaceshipDirection <- "right";
                 } else if next2 == 68 {
-                    (*currentWidth)--;
                     spaceshipDirection <- "left";
                 }
             }
@@ -33,6 +31,6 @@ func PlayerInput(spaceshipDirection chan string, currentHeight *int, currentWidt
             }
             break;
         }
-        time.Sleep(100 * time.Millisecond);
+        time.Sleep(50 * time.Millisecond);
     }
 }

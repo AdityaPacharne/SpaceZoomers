@@ -19,18 +19,18 @@ func BulletLocation (activeBullets *[]bullet, terminalHeight int, quit chan bool
             }
             *activeBullets = newBullets;
         }
-        time.Sleep(100 * time.Millisecond);
+        time.Sleep(50 * time.Millisecond);
     }
 }
 
-func BulletCreate (activeBullets *[]bullet, currentHeight *int, currentWidth *int, spaceshipBullet bool, quit chan bool) {
+func BulletCreate (activeBullets *[]bullet, spaceship *spaceshipstruct, spaceshipBullet bool, quit chan bool) {
 	for {
 		select {
 		case <- quit:
 			return
 		default:
-            (*activeBullets) = append((*activeBullets), bullet{direction: true, height: *currentHeight - 1, width: *currentWidth});
-			time.Sleep(100 * time.Millisecond);
+            (*activeBullets) = append((*activeBullets), bullet{direction: true, height: (*spaceship).height- 1, width: (*spaceship).width});
+			time.Sleep(50 * time.Millisecond);
 		}
 	}
 }

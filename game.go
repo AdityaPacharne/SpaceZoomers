@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"golang.org/x/sys/unix"
 	"sync"
 )
 
-type spaceship struct {
+type spaceshipstruct struct {
     health int
     height int
     width int
@@ -33,10 +32,6 @@ func getTerminalSize() (terminalHeight, terminalWidth int) {
 }
 
 func main() {
-    // Player Enters
-	fmt.Println("Welcome Player");
-	fmt.Println("Enter q to exit");
-
     // Fetching the terminal size
 	var terminalHeight, terminalWidth int = getTerminalSize();
 
@@ -50,8 +45,9 @@ func main() {
 	}
     
     // Placing our spaceship as a single character for now at the centre of the screen
-	var currentHeight int = terminalHeight-1;
-	var currentWidth int = terminalWidth/2;
+    var spaceship spaceshipstruct;
+    spaceship.height = terminalHeight - 1;
+    spaceship.width = terminalWidth / 2;
 
     // Creating a slice of type bullet struct to save the activeBullets present on Users screen
 	var activeBullets []bullet;
@@ -67,20 +63,20 @@ func main() {
     // Goroutine to Print the screen
 	go func() {
 		defer wg.Done();
-		Render(screen, &activeBullets, terminalWidth, &currentHeight, &currentWidth, spaceshipDirection, quit);
+		Render(screen, &activeBullets, terminalWidth, &spaceship, spaceshipDirection, quit);
 	}();
 
     // Goroutine to take player input and modify the position of spaceship accordingly
 	go func() {
 		defer wg.Done();
-		PlayerInput(spaceshipDirection, &currentHeight, &currentWidth, terminalHeight, terminalWidth, quit);
+		PlayerInput(spaceshipDirection, &spaceship, terminalHeight, terminalWidth, quit);
 	}();
 
     // Go routine to create bullet every specific duration
     // It is made so the user dont have to shoot, the spaceship will keep firing and the user has to aim
 	go func() {
 		defer wg.Done();
-		BulletCreate(&activeBullets, &currentHeight, &currentWidth, true, quit);
+		BulletCreate(&activeBullets, &spaceship, true, quit);
 	}();
 
 	go func() {
@@ -94,5 +90,6 @@ func main() {
     // A little thanks for playing
     // Thanks for playing my game
     // And thanks to you too, to take time from your day to read my dumb code
-	fmt.Println("Thanks for playing the game");
+
+        fmt.Println("Thanks for playing the game");
 }
