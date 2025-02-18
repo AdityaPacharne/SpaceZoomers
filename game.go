@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
 	"golang.org/x/sys/unix"
 	"sync"
 )
@@ -91,5 +92,5 @@ func main() {
     // Thanks for playing my game
     // And thanks to you too, to take time from your day to read my dumb code
 
-        fmt.Println("Thanks for playing the game");
+    fmt.Println("Thanks for playing the game");
 }

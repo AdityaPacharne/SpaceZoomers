@@ -8,7 +8,6 @@ import (
 
 // Function that renders the screen
 func checkOutOfBound(terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection string) int {
-    fmt.Println("Inside checker");
     if spaceshipDirection == "right" && spaceship.width < terminalWidth-1 {
         (*spaceship).width++;
         return (*spaceship).width + 1;
@@ -31,7 +30,7 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int,
                 screen[i] = append([]string(nil), actualScreen[i]...) // Deep copy each row
             }
 
-			fmt.Print("\033[H\033[2J")
+			fmt.Print("\033[H")
 
             // Adds bullet onto the screen from activeBullets slice
             for _, tempBullet := range *activeBullets {
@@ -47,11 +46,17 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int,
             }
 
             // Printing the screen
-			for _, row := range (screen) {
-				fmt.Println(strings.Join(row, ""))
+			var screenBuffer strings.Builder;
+			for _, row := range screen {
+				screenBuffer.WriteString(strings.Join(row, "") + "\n");
 			}
+			fmt.Print(screenBuffer.String());
 
-			time.Sleep(50 * time.Millisecond);
+			// for _, row := range (screen) {
+			// 	fmt.Println(strings.Join(row, ""))
+			// }
+
+			time.Sleep(100 * time.Millisecond);
 		}
 	}
 }
