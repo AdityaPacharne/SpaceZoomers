@@ -19,7 +19,7 @@ func BulletLocation (activeBullets *[]bullet, terminalHeight int, quit chan bool
             }
             *activeBullets = newBullets;
         }
-        time.Sleep(300 * time.Millisecond);
+        time.Sleep(100 * time.Millisecond);
     }
 }
 
@@ -30,7 +30,7 @@ func BulletCreate (activeBullets *[]bullet, spaceship *spaceshipstruct, spaceshi
 			return
 		default:
             (*activeBullets) = append((*activeBullets), bullet{direction: true, height: (*spaceship).height- 1, width: (*spaceship).width});
-			time.Sleep(300 * time.Millisecond);
+			time.Sleep(100 * time.Millisecond);
 		}
 	}
 }

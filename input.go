@@ -25,16 +25,12 @@ func PlayerInput(spaceshipDirection chan string, spaceship *spaceshipstruct, ter
                     spaceshipDirection <- "left";
                 }
             }
-        } else if input == 106 {
-            spaceshipDirection <- "left";
-        } else if input == 107 {
-            spaceshipDirection <- "right";
         } else if input == 'q' {
             for i:=0; i<3; i++ {
                 quit <- true;
             }
             break;
         }
-        time.Sleep(100 * time.Millisecond);
+        time.Sleep(10 * time.Millisecond);
     }
 }

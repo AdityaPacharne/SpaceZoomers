@@ -10,13 +10,10 @@ import (
 func checkOutOfBound(terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection string) int {
     if spaceshipDirection == "right" && spaceship.width < terminalWidth-1 {
         (*spaceship).width++;
-        return (*spaceship).width + 1;
     } else if spaceshipDirection == "left" && spaceship.width > 0 {
         (*spaceship).width--;
-        return (*spaceship).width - 1;
-    } else {
-        return (*spaceship).width;
     }
+    return (*spaceship).width;
 }
 
 func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection chan string, quit chan bool) {
@@ -34,7 +31,7 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int,
 
             // Adds bullet onto the screen from activeBullets slice
             for _, tempBullet := range *activeBullets {
-                screen[tempBullet.height][tempBullet.width] = "^";
+                screen[tempBullet.height][tempBullet.width] = "|";
             }
 
             select {
@@ -52,11 +49,7 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int,
 			}
 			fmt.Print(screenBuffer.String());
 
-			// for _, row := range (screen) {
-			// 	fmt.Println(strings.Join(row, ""))
-			// }
-
-			time.Sleep(100 * time.Millisecond);
+			time.Sleep(10 * time.Millisecond);
 		}
 	}
 }
