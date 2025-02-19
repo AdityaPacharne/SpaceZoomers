@@ -8,9 +8,9 @@ import (
 
 // Function that renders the screen
 func checkOutOfBound(terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection string) int {
-    if spaceshipDirection == "right" && spaceship.width < terminalWidth-1 {
+    if spaceshipDirection == "right" && spaceship.width < terminalWidth-3 {
         (*spaceship).width++;
-    } else if spaceshipDirection == "left" && spaceship.width > 0 {
+    } else if spaceshipDirection == "left" && spaceship.width > 2 {
         (*spaceship).width--;
     }
     return (*spaceship).width;
@@ -31,15 +31,23 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int,
 
             // Adds bullet onto the screen from activeBullets slice
             for _, tempBullet := range *activeBullets {
-                screen[tempBullet.height][tempBullet.width] = "|";
+                screen[tempBullet.height][tempBullet.width] = ":";
             }
 
             select {
             case dir := <- spaceshipDirection:
                 var newCurrentWidth int = checkOutOfBound(terminalWidth, spaceship, dir);
-                screen[spaceship.height][newCurrentWidth] = "H";
+                screen[spaceship.height][newCurrentWidth-2] = "/";
+                screen[spaceship.height][newCurrentWidth-1] = "-";
+                screen[spaceship.height][newCurrentWidth] = "o";
+                screen[spaceship.height][newCurrentWidth+1] = "-";
+                screen[spaceship.height][newCurrentWidth+2] = "\\";
             default:
-                screen[spaceship.height][spaceship.width] = "H";
+                screen[spaceship.height][spaceship.width-2] = "/";
+                screen[spaceship.height][spaceship.width-1] = "-";
+                screen[spaceship.height][spaceship.width] = "o";
+                screen[spaceship.height][spaceship.width+1] = "-";
+                screen[spaceship.height][spaceship.width+2] = "\\";
             }
 
             // Printing the screen
