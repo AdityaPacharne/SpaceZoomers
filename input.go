@@ -26,7 +26,7 @@ func PlayerInput(spaceshipDirection chan string, spaceship *spaceshipstruct, ter
                 }
             }
         } else if input == 'q' {
-            for i:=0; i<3; i++ {
+            for i:=0; i<5; i++ {
                 quit <- true;
             }
             break;

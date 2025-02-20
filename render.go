@@ -16,7 +16,7 @@ func checkOutOfBound(terminalWidth int, spaceship *spaceshipstruct, spaceshipDir
     return (*spaceship).width;
 }
 
-func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection chan string, quit chan bool) {
+func Render(actualScreen [][]string, activeBullets *[]bullet, activeRocks *[]rocks, terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection chan string, quit chan bool) {
 	for {
 		select {
 		case <- quit:
@@ -32,6 +32,10 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, terminalWidth int,
             // Adds bullet onto the screen from activeBullets slice
             for _, tempBullet := range *activeBullets {
                 screen[tempBullet.height][tempBullet.width] = ":";
+            }
+
+            for _, tempRock := range *activeRocks {
+                screen[tempRock.height][tempRock.width] = "*"
             }
 
             select {

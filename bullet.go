@@ -12,7 +12,7 @@ func BulletLocation (activeBullets *[]bullet, terminalHeight int, quit chan bool
         default:
             var newBullets []bullet;
             for i := range *activeBullets {
-                if ((*activeBullets)[i].direction && (*activeBullets)[i].height >= 2) || (!(*activeBullets)[i].direction && (*activeBullets)[i].height <= terminalHeight - 1) {  
+                if ((*activeBullets)[i].direction && (*activeBullets)[i].height >= 2) || (!(*activeBullets)[i].direction && (*activeBullets)[i].height < terminalHeight - 1) {  
                     (*activeBullets)[i].height--;
                     newBullets = append(newBullets, (*activeBullets)[i]);
                 }

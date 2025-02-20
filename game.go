@@ -12,9 +12,9 @@ type spaceshipstruct struct {
     width int
 }
 
-type Rocks struct {
-	xaxis int
-	yaxis int
+type rocks struct {
+	height int
+	width int
 }
 
 type bullet struct {
@@ -47,24 +47,28 @@ func main() {
     
     // Placing our spaceship as a single character for now at the centre of the screen
     var spaceship spaceshipstruct;
+    spaceship.health = 100;
     spaceship.height = terminalHeight - 1;
     spaceship.width = terminalWidth / 2;
 
     // Creating a slice of type bullet struct to save the activeBullets present on Users screen
 	var activeBullets []bullet;
 
+    // Creating a slice of type rock struct to save the activeRocks present on Users screen
+    var activeRocks []rocks;
+    
     // Bool Channel to check if user has to quit
 	quit := make(chan bool);
     spaceshipDirection := make(chan string);
 	
     // A waitgroup to synchronize multiple goroutines, it waits for 3 goroutines to finish 
 	var wg sync.WaitGroup
-	wg.Add(4);
+	wg.Add(5);
 
     // Goroutine to Print the screen
 	go func() {
 		defer wg.Done();
-		Render(screen, &activeBullets, terminalWidth, &spaceship, spaceshipDirection, quit);
+		Render(screen, &activeBullets, &activeRocks, terminalWidth, &spaceship, spaceshipDirection, quit);
 	}();
 
     // Goroutine to take player input and modify the position of spaceship accordingly
@@ -84,6 +88,16 @@ func main() {
 		defer wg.Done();
         BulletLocation(&activeBullets, terminalHeight, quit);
 	}();
+
+    go func() {
+        defer wg.Done();
+        RocksCreate(&activeRocks, terminalHeight, terminalWidth, quit);
+    }();
+
+    go func() {
+        defer wg.Done();
+        RocksLocation(&activeRocks, terminalHeight, quit);
+    }();
 
     // WaitGroup waits....
 	wg.Wait();
