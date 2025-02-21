@@ -4,17 +4,28 @@ import (
     "time"
 )
 
-func BulletLocation (activeBullets *[]bullet, terminalHeight int, quit chan bool) {
+func BulletLocation (activeBullets *[]bullet, activeRocks *[]rocks, terminalHeight int, quit chan bool) {
     for {
         select {
         case <- quit:
             return
         default:
             var newBullets []bullet;
-            for i := range *activeBullets {
-                if ((*activeBullets)[i].direction && (*activeBullets)[i].height >= 2) || (!(*activeBullets)[i].direction && (*activeBullets)[i].height < terminalHeight - 1) {  
-                    (*activeBullets)[i].height--;
-                    newBullets = append(newBullets, (*activeBullets)[i]);
+            var flag bool = true;
+            for i := range len(*activeBullets) {
+                if (*activeBullets)[i].direction && (*activeBullets)[i].height >= 2 {  
+                    for j := range len(*activeRocks) {
+                        if ((*activeBullets)[i].height-1 != (*activeRocks)[j].height) || ((*activeBullets)[i].height+1 != (*activeRocks)[j].height){
+                            (*activeBullets)[i].height--;
+                            flag = true;
+                        } else {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if flag {
+                        newBullets = append(newBullets, (*activeBullets)[i]);
+                    }
                 }
             }
             *activeBullets = newBullets;

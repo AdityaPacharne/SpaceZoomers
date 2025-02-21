@@ -35,7 +35,7 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, activeRocks *[]roc
             }
 
             for _, tempRock := range *activeRocks {
-                screen[tempRock.height][tempRock.width] = "*"
+                screen[tempRock.height][tempRock.width] = tempRock.state;
             }
 
             select {

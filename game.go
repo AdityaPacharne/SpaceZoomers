@@ -13,6 +13,7 @@ type spaceshipstruct struct {
 }
 
 type rocks struct {
+    state string 
 	height int
 	width int
 }
@@ -86,7 +87,7 @@ func main() {
 
 	go func() {
 		defer wg.Done();
-        BulletLocation(&activeBullets, terminalHeight, quit);
+        BulletLocation(&activeBullets, &activeRocks, terminalHeight, quit);
 	}();
 
     go func() {
