@@ -11,20 +11,18 @@ func BulletLocation (activeBullets *[]bullet, activeRocks *[]rocks, terminalHeig
             return
         default:
             var newBullets []bullet;
-            var flag bool = true;
             for i := range len(*activeBullets) {
                 if (*activeBullets)[i].direction && (*activeBullets)[i].height >= 2 {  
+                    var flag bool = true;
                     for j := range len(*activeRocks) {
-                        if ((*activeBullets)[i].height-1 != (*activeRocks)[j].height) || ((*activeBullets)[i].height+1 != (*activeRocks)[j].height){
-                            (*activeBullets)[i].height--;
-                            flag = true;
-                        } else {
-                            flag = false;
-                            break;
+                        if (*activeBullets)[i].height-1 == (*activeRocks)[j].height && (*activeBullets)[i].width == (*activeRocks)[j].width {
+                            flag = false
+                            break
                         }
                     }
                     if flag {
-                        newBullets = append(newBullets, (*activeBullets)[i]);
+                        (*activeBullets)[i].height-- // Move bullet if no collision
+                        newBullets = append(newBullets, (*activeBullets)[i])
                     }
                 }
             }

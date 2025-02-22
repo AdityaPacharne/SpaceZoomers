@@ -6,7 +6,6 @@ import (
     "time"
 )
 
-// Function that renders the screen
 func checkOutOfBound(terminalWidth int, spaceship *spaceshipstruct, spaceshipDirection string) int {
     if spaceshipDirection == "right" && spaceship.width < terminalWidth-3 {
         (*spaceship).width++;
@@ -24,12 +23,12 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, activeRocks *[]roc
 		default:
             screen := make([][]string, len(actualScreen))
             for i := range actualScreen {
-                screen[i] = append([]string(nil), actualScreen[i]...) // Deep copy each row
+                screen[i] = append([]string(nil), actualScreen[i]...)
             }
 
 			fmt.Print("\033[H")
 
-            // Adds bullet onto the screen from activeBullets slice
+            fmt.Println("activeBullets: ", *activeBullets);
             for _, tempBullet := range *activeBullets {
                 screen[tempBullet.height][tempBullet.width] = ":";
             }
@@ -54,7 +53,6 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, activeRocks *[]roc
                 screen[spaceship.height][spaceship.width+2] = "\\";
             }
 
-            // Printing the screen
 			var screenBuffer strings.Builder;
 			for _, row := range screen {
 				screenBuffer.WriteString(strings.Join(row, "") + "\n");
