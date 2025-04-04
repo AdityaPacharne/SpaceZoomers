@@ -14,7 +14,7 @@ func RocksCreate(activeRocks *[]rocks, terminalHeight int, terminalWidth int, qu
             var tempRockWidth int = rand.IntN(terminalWidth);
             (*activeRocks) = append((*activeRocks), rocks{height: 0, width: tempRockWidth, state: "*"});
         }
-        time.Sleep(3 * time.Second);
+        time.Sleep(1 * time.Second);
     }
 }
 
@@ -33,13 +33,8 @@ func RocksLocation(activeRocks *[]rocks, terminalHeight int, quit chan bool) {
             }
             *activeRocks = newRocks;
         }
-        time.Sleep(1 * time.Second);
+        time.Sleep(3 * time.Second);
     }
 }
-
-
-
-
-
 
 

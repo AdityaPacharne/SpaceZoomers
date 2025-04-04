@@ -28,7 +28,6 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, activeRocks *[]roc
 
 			fmt.Print("\033[H")
 
-            fmt.Println("activeBullets: ", *activeBullets);
             for _, tempBullet := range *activeBullets {
                 screen[tempBullet.height][tempBullet.width] = ":";
             }

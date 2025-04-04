@@ -103,9 +103,8 @@ func main() {
     // WaitGroup waits....
 	wg.Wait();
 
-    // A little thanks for playing
     // Thanks for playing my game
-    // And thanks to you too, to take time from your day to read my dumb code
+    // And thanks to take time from your day to read my dumb code
 
     fmt.Println("Thanks for playing the game");
 }
