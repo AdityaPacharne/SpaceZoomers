@@ -6,6 +6,10 @@ import (
 	"sync"
 )
 
+var bulletMutex sync.Mutex;
+var rockMutex sync.Mutex;
+var spaceshipMutex sync.Mutex;
+
 type spaceshipstruct struct {
     health int
     height int

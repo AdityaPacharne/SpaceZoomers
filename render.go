@@ -28,29 +28,37 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, activeRocks *[]roc
 
 			fmt.Print("\033[H")
 
+            bulletMutex.Lock();
             for _, tempBullet := range *activeBullets {
                 screen[tempBullet.height][tempBullet.width] = ":";
             }
+            bulletMutex.Unlock();
 
+            rockMutex.Lock();
             for _, tempRock := range *activeRocks {
-                screen[tempRock.height][tempRock.width] = tempRock.state;
+                if tempRock.height < len(screen) && tempRock.width < len(screen[0]) {
+                    screen[tempRock.height][tempRock.width] = tempRock.state;
+                }
             }
+            rockMutex.Unlock();
 
+            var newCurrentWidth int;
             select {
             case dir := <- spaceshipDirection:
-                var newCurrentWidth int = checkOutOfBound(terminalWidth, spaceship, dir);
-                screen[spaceship.height][newCurrentWidth-2] = "/";
-                screen[spaceship.height][newCurrentWidth-1] = "-";
-                screen[spaceship.height][newCurrentWidth] = "o";
-                screen[spaceship.height][newCurrentWidth+1] = "-";
-                screen[spaceship.height][newCurrentWidth+2] = "\\";
+                spaceshipMutex.Lock();
+                newCurrentWidth = checkOutOfBound(terminalWidth, spaceship, dir);
+                spaceshipMutex.Unlock();
             default:
-                screen[spaceship.height][spaceship.width-2] = "/";
-                screen[spaceship.height][spaceship.width-1] = "-";
-                screen[spaceship.height][spaceship.width] = "o";
-                screen[spaceship.height][spaceship.width+1] = "-";
-                screen[spaceship.height][spaceship.width+2] = "\\";
+                spaceshipMutex.Lock();
+                newCurrentWidth = spaceship.width;
+                spaceshipMutex.Unlock();
             }
+            
+            screen[spaceship.height][newCurrentWidth-2] = "/";
+            screen[spaceship.height][newCurrentWidth-1] = "-";
+            screen[spaceship.height][newCurrentWidth] = "o";
+            screen[spaceship.height][newCurrentWidth+1] = "-";
+            screen[spaceship.height][newCurrentWidth+2] = "\\";
 
 			var screenBuffer strings.Builder;
 			for _, row := range screen {
@@ -58,7 +66,7 @@ func Render(actualScreen [][]string, activeBullets *[]bullet, activeRocks *[]roc
 			}
 			fmt.Print(screenBuffer.String());
 
-			time.Sleep(10 * time.Millisecond);
+			time.Sleep(33 * time.Millisecond);
 		}
 	}
 }

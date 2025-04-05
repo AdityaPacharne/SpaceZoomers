@@ -4,7 +4,6 @@ import (
     "os"
     "bufio"
     "golang.org/x/term"
-    "time"
 )
 
 func PlayerInput(spaceshipDirection chan string, spaceship *spaceshipstruct, terminalHeight int, terminalWidth int, quit chan bool) {
@@ -31,6 +30,5 @@ func PlayerInput(spaceshipDirection chan string, spaceship *spaceshipstruct, ter
             }
             break;
         }
-        time.Sleep(10 * time.Millisecond);
     }
 }

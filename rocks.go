@@ -12,9 +12,16 @@ func RocksCreate(activeRocks *[]rocks, terminalHeight int, terminalWidth int, qu
             return;
         default:
             var tempRockWidth int = rand.IntN(terminalWidth);
-            (*activeRocks) = append((*activeRocks), rocks{height: 0, width: tempRockWidth, state: "*"});
+            rockMutex.Lock();
+            var newRock rocks = rocks{
+                height: 0,
+                width: tempRockWidth,
+                state: "*",
+            }
+            (*activeRocks) = append((*activeRocks), newRock);
+            rockMutex.Unlock();
         }
-        time.Sleep(1 * time.Second);
+        time.Sleep(400 * time.Millisecond);
     }
 }
 
@@ -24,6 +31,7 @@ func RocksLocation(activeRocks *[]rocks, terminalHeight int, quit chan bool) {
         case <- quit:
             return;
         default:
+            rockMutex.Lock();
             var newRocks []rocks;
             for i := range len(*activeRocks) {
                 if (*activeRocks)[i].height < terminalHeight - 1 {
@@ -32,8 +40,9 @@ func RocksLocation(activeRocks *[]rocks, terminalHeight int, quit chan bool) {
                 }
             }
             *activeRocks = newRocks;
+            rockMutex.Unlock();
         }
-        time.Sleep(3 * time.Second);
+        time.Sleep(150 * time.Millisecond);
     }
 }
 

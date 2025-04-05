@@ -10,6 +10,8 @@ func BulletLocation (activeBullets *[]bullet, activeRocks *[]rocks, terminalHeig
         case <- quit:
             return
         default:
+            bulletMutex.Lock();
+            rockMutex.Lock();
             var newBullets []bullet;
             for i := range *activeBullets {
                 if (*activeBullets)[i].direction && (*activeBullets)[i].height >= 2 {  
@@ -27,8 +29,10 @@ func BulletLocation (activeBullets *[]bullet, activeRocks *[]rocks, terminalHeig
                 }
             }
             *activeBullets = newBullets;
+            rockMutex.Unlock();
+            bulletMutex.Unlock();
         }
-        time.Sleep(100 * time.Millisecond);
+        time.Sleep(50 * time.Millisecond);
     }
 }
 
@@ -38,8 +42,18 @@ func BulletCreate (activeBullets *[]bullet, spaceship *spaceshipstruct, spaceshi
 		case <- quit:
 			return
 		default:
-            (*activeBullets) = append((*activeBullets), bullet{direction: true, height: (*spaceship).height- 1, width: (*spaceship).width});
-			time.Sleep(100 * time.Millisecond);
+            spaceshipMutex.Lock();
+            var newBullet bullet = bullet{
+                direction: true,
+                height: (*spaceship).height - 1,
+                width: (*spaceship).width,
+            }
+            spaceshipMutex.Unlock();
+
+            bulletMutex.Lock();
+            (*activeBullets) = append((*activeBullets), newBullet);
+            bulletMutex.Unlock();
+			time.Sleep(200 * time.Millisecond);
 		}
 	}
 }
