@@ -32,17 +32,22 @@ func RocksLocation(activeRocks *[]rocks, terminalHeight int, quit chan bool) {
             return;
         default:
             rockMutex.Lock();
-            var newRocks []rocks;
-            for i := range len(*activeRocks) {
-                if (*activeRocks)[i].height < terminalHeight - 1 {
-                    (*activeRocks)[i].height++;
-                    newRocks = append(newRocks, (*activeRocks)[i]);
+
+            var first = 0;
+            for second := 0; second < len(*activeRocks); second++ {
+                var tempRock rocks = (*activeRocks)[second];
+                if tempRock.height < terminalHeight - 1 {
+                    if tempRock.state != "O" {
+                        tempRock.height++;
+                        (*activeRocks)[first] = tempRock;
+                        first++;
+                    }
                 }
             }
-            *activeRocks = newRocks;
+            *activeRocks = (*activeRocks)[:first];
             rockMutex.Unlock();
         }
-        time.Sleep(150 * time.Millisecond);
+        time.Sleep(200 * time.Millisecond);
     }
 }
 

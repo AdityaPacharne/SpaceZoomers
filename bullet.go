@@ -4,6 +4,13 @@ import (
     "time"
 )
 
+func abs(x int, y int) int {
+    if x > y {
+        return x - y;
+    }
+    return y - x;
+}
+
 func BulletLocation (activeBullets *[]bullet, activeRocks *[]rocks, terminalHeight int, quit chan bool) {
     for {
         select {
@@ -12,27 +19,33 @@ func BulletLocation (activeBullets *[]bullet, activeRocks *[]rocks, terminalHeig
         default:
             bulletMutex.Lock();
             rockMutex.Lock();
-            var newBullets []bullet;
-            for i := range *activeBullets {
-                if (*activeBullets)[i].direction && (*activeBullets)[i].height >= 2 {  
-                    var flag bool = true;
-                    for j := range *activeRocks {
-                        if (*activeBullets)[i].height-1 == (*activeRocks)[j].height && (*activeBullets)[i].width == (*activeRocks)[j].width {
-                            flag = false
-                            break
+            var first int = 0;
+            for second:=0; second < len(*activeBullets); second++ {
+                var tempBullet bullet = (*activeBullets)[second];
+
+                if tempBullet.direction && tempBullet.height >= 5 {
+                    var collided bool = false;
+                    for i := range *activeRocks {
+                        var tempRock *rocks = &(*activeRocks)[i]
+                        if tempRock.width == tempBullet.width && abs(tempRock.height,tempBullet.height) <= 1 {
+                            tempRock.state = "O";
+                            collided = true;
+                            break;
                         }
                     }
-                    if flag {
-                        (*activeBullets)[i].height--;
-                        newBullets = append(newBullets, (*activeBullets)[i])
+                    if !collided {
+                        tempBullet.height--;
+                        (*activeBullets)[first] = tempBullet;
+                        first++;
                     }
                 }
             }
-            *activeBullets = newBullets;
+            *activeBullets = (*activeBullets)[:first];
+
             rockMutex.Unlock();
             bulletMutex.Unlock();
         }
-        time.Sleep(50 * time.Millisecond);
+        time.Sleep(100 * time.Millisecond);
     }
 }
 
